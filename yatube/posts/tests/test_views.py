@@ -182,21 +182,25 @@ class PostsPagesTests(TestCase):
     def test_auth_follow_unfollow(self):
         amount = Follow.objects.count()
         followed = User.objects.create(username='interesnyuser')
-        self.authorized_client.get(reverse('profile_follow',
-                                           kwargs={'username': followed.username}))
+        self.authorized_client.get(reverse(
+            'profile_follow',
+            kwargs={'username': followed.username}))
         self.assertEqual(Follow.objects.count(), amount + 1)
         follow = Follow.objects.first()
         self.assertEqual(follow.author, followed)
         self.assertEqual(follow.user, PostsPagesTests.user)
-        self.authorized_client.get(reverse('profile_unfollow',
-                                           kwargs={'username': followed.username}))
+        self.authorized_client.get(reverse(
+            'profile_unfollow',
+            kwargs={'username': followed.username}))
         self.assertEqual(Follow.objects.count(), amount)
 
     def test_follow_index(self):
         interesting = User.objects.create(username='interesnyuser')
         boring = User.objects.create(username='otheruser')
-        self.authorized_client.get(reverse('profile_follow',
-                                           kwargs={'username': interesting.username}))
+        self.authorized_client.get(reverse(
+            'profile_follow',
+            kwargs={'username': interesting.username}
+        ))
         post_in = Post.objects.create(
             text='Пост появится в ленте',
             author=interesting,

@@ -50,7 +50,8 @@ def profile(request, username):
     posts = author.posts.all()
     page = get_a_page(posts, request)
     if request.user.is_authenticated:
-        following = Follow.objects.filter(author=author, user=request.user).exists()
+        following = Follow.objects.filter(author=author,
+                                          user=request.user).exists()
     else:
         following = False
     context = {
@@ -87,7 +88,8 @@ def post_edit(request, username, post_id):
     if post.author != request.user:
         return redirect('post', username=username, post_id=post_id)
 
-    form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
+    form = PostForm(request.POST or None, files=request.FILES or None,
+                    instance=post)
     if form.is_valid():
         form.save()
         return redirect('post', username=username, post_id=post_id)
@@ -150,6 +152,7 @@ def profile_follow(request, username):
 
 @login_required
 def profile_unfollow(request, username):
-    if Follow.objects.filter(author__username=username, user=request.user).exists():
-        Follow.objects.filter(author__username=username, user=request.user).delete()
+    fol = Follow.objects.filter(author__username=username, user=request.user)
+    if fol.exists():
+        fol.delete()
     return redirect('profile', username=username)
