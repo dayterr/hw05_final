@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Об авторе проекта{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-3 mb-3 mt-1">
+      <div class="card">
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="h3">
+                Об авторе
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="h6 text-muted">
+                Маша, 23 года, изучаю django, уже 10 лет на last.fm<br>
+                Мой GitHub: <a target="_blank" href="https://github.com/dayterr">пуньк</a><br>
+                Мой Last.fm: <a target="_blank" href="https://www.last.fm/user/De_Mariya">пуньк</a><br>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="card-body">
+        <div class="card-text">
+          Привет! Меня зовут Маша, по образованию я лингвист-теоретик,
+          но поняла пару лет назад, что хотела бы заниматься программированием. Поэтому я здесь.
+          Помимо программирования люблю "Звёздные войны", древние языки, кататься на самокате и слушать музыку.
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Записи сообщества {{ group.title }}{% endblock %}
+{% block header %}{{ group.title }}{% endblock %}
+
+{% block content %}
+  {% load thumbnail %}
+    {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
+    <img class="card-img" src="{{ im.url }}">
+  {% endthumbnail %}
+  <p>
+    {{ group.description }}
+  </p>
+
+  {% for post in page %}
+    <h3>
+      Автор: {{ post.author.get_full_name }}, дата публикации: {{ post.pub_date|date:"d M Y" }}
+    </h3>
+    <p>{{ post.text|linebreaksbr }}</p>
+    <hr>
+  {% endfor %}
+
+  {% include "includes/paginator.html" %}
+
+{% endblock %}
