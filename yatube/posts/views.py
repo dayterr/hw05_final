@@ -143,7 +143,8 @@ def follow_index(request):
 def profile_follow(request, username):
     if request.user.username == username:
         return redirect('index')
-    if not Follow.objects.filter(author__username=username, user=request.user).exists():
+    if not Follow.objects.filter(author__username=username,
+                                 user=request.user).exists():
         author = get_object_or_404(User, username=username)
         fol = Follow.objects.create(author=author, user=request.user)
         fol.save()
