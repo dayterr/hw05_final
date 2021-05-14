@@ -134,7 +134,8 @@ class PostsPagesTests(TestCase):
 
     def test_paginator(self):
         objs = (Post(text=f'Какой-то пост {i}',
-                     group=PostsPagesTests.group) for i in range(14))
+                     group=PostsPagesTests.group,
+                     author=PostsPagesTests.user) for i in range(14))
         Post.objects.bulk_create(objs)
         all_posts = PostsPagesTests.group.posts.count()
         for page in range(1, 3):

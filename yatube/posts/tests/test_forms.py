@@ -51,6 +51,7 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(post.text, form_data['text'])
         self.assertEqual(post.group, PostCreateFormTests.group)
         self.assertEqual(post.author, PostCreateFormTests.user)
+        self.assertIn('<img', response.content.decode())
 
     def test_edit_post(self):
         other_group = Group.objects.create(

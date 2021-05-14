@@ -18,21 +18,21 @@ def get_a_page(posts, request):
 
 
 def index(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all().select_related('group', 'author')
     page = get_a_page(posts, request)
     return render(request, 'posts/index.html', {'page': page})
 
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts = group.posts.all()
+    posts = group.posts.all().select_related('author')
     page = get_a_page(posts, request)
     return render(request, 'posts/group.html', {'group': group, 'page': page})
 
 
 @login_required
 def new_post(request):
-    form = PostForm(request.POST or None)
+    form = PostForm(request.POST or None, files=request.FILES or None)
     if form.is_valid():
         n_post = form.save(commit=False)
         n_post.author = request.user
@@ -47,8 +47,10 @@ def new_post(request):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    posts = author.posts.all()
+    posts = author.posts.all().select_related('group')
     page = get_a_page(posts, request)
+    followers = Follow.objects.filter(author=author).count()
+    celebs = Follow.objects.filter(user=author).count()
     if request.user.is_authenticated:
         following = Follow.objects.filter(author=author,
                                           user=request.user).exists()
@@ -57,7 +59,9 @@ def profile(request, username):
     context = {
         'author': author,
         'page': page,
-        'following': following
+        'following': following,
+        'followers': followers,
+        'celebs': celebs,
     }
     return render(request, 'posts/profile.html', context)
 
@@ -65,13 +69,6 @@ def profile(request, username):
 def post_view(request, username, post_id):
     post = get_object_or_404(Post, author__username=username, id=post_id)
     comments = post.comments.all()
-    if request.method == 'POST':
-        comment_form = CommentForm(data=request.POST)
-        if comment_form.is_valid():
-            n_com = comment_form.save(commit=False)
-            n_com.author = request.user
-            n_com.post = post
-            n_com.save()
     com_form = CommentForm()
     context = {
         'author': post.author,
@@ -119,6 +116,8 @@ def server_error(request):
 def add_comment(request, username, post_id):
     post = get_object_or_404(Post, author__username=username, id=post_id)
     form = CommentForm(request.POST or None)
+    followers = Follow.objects.filter(author=post.author).count()
+    celebs = Follow.objects.filter(user=post.author).count()
     if form.is_valid():
         n_com = form.save(commit=False)
         n_com.author = request.user
@@ -128,13 +127,16 @@ def add_comment(request, username, post_id):
     context = {
         'form': form,
         'post': post,
+        'author': post.author,
+        'followers': followers,
+        'celebs': celebs,
     }
-    return render(request, 'posts/comments.html', context)
+    return render(request, 'posts/post.html', context)
 
 
 @login_required
 def follow_index(request):
-    posts = Post.objects.filter(author__following__user=request.user)
+    posts = Post.objects.filter(author__following__user=request.user).select_related('author', 'group')
     page = get_a_page(posts, request)
     return render(request, 'posts/follow.html', {'page': page})
 
@@ -142,7 +144,7 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     if request.user.username == username:
-        return redirect('index')
+        return redirect('profile', username=username)
     if not Follow.objects.filter(author__username=username,
                                  user=request.user).exists():
         author = get_object_or_404(User, username=username)
