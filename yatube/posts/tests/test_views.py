@@ -202,7 +202,6 @@ class PostsPagesTests(TestCase):
             kwargs={'username': followed.username}))
         self.assertEqual(Follow.objects.count(), amount - 1)
 
-
     def test_follow_index(self):
         interesting = User.objects.create(username='interesnyuser')
         boring = User.objects.create(username='otheruser')

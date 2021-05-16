@@ -1,4 +1,3 @@
-import re
 import shutil
 
 from django.conf import settings
@@ -152,14 +151,13 @@ class PostCreateFormTests(TestCase):
             'username': PostCreateFormTests.user.username,
             'post_id': post.id,
         }
-        response = self.authorized_client.post(
+        self.authorized_client.post(
             reverse('add_comment', kwargs=kwargs),
             data=form_data,
             follow=True
         )
         com = Comment.objects.first()
         self.assertEqual(post.comments.filter(post=post).count(), amount + 1)
-        #self.assertRedirects(response, reverse('post', kwargs=kwargs))
         self.assertEqual(com.text, text)
         self.assertEqual(com.post, post)
 
