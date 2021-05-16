@@ -6,7 +6,7 @@
       {% csrf_token %}
       <h5 class="card-header">Добавить комментарий:</h5>
       <div class="card-body">
-        <div class="form-group">
+        <div class="form-group" action="{% url 'add_comment' post.author.username post.id %}">
           {{ form.text|addclass:"form-control" }}
         </div>
         <button type="submit" class="btn btn-primary">Отправить</button>
@@ -24,7 +24,7 @@
           {{ item.author.username }}
         </a>
       </h5>
-      <p>{{ item.text | linebreaksbr }}</p>
+      <p>{{ item.text|linebreaksbr }}</p>
     </div>
   </div>
 {% endfor %}

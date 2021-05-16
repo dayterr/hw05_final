@@ -3,11 +3,11 @@
 {% block content %}
   <div class="row">
     <div class="col-md-3 mb-3 mt-1">
-      {% include 'includes/author_card.html' with posts_count=post.author.posts.count %}
+      {% include 'includes/author_card.html' %}
     </div>
     <div class="col-md-9">
       {% include 'includes/post_card.html' with is_profile=False %}
     </div>
   </div>
-  {% include 'posts/comments.html' %}
+  {% include 'includes/comments.html' with comments=post.comments.all %}
 {% endblock %}

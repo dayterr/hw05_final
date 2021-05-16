@@ -29,7 +29,9 @@ class Post(models.Model):
                               on_delete=models.SET_NULL,
                               blank=True, null=True,
                               related_name='posts')
-    image = models.ImageField(upload_to='posts/', blank=True, null=True)
+    image = models.ImageField(upload_to='posts/',
+                              verbose_name='Изображение',
+                              blank=True, null=True)
 
     class Meta:
         verbose_name = 'Пост'
@@ -50,6 +52,10 @@ class Comment(models.Model):
     text = models.TextField(verbose_name='Текст комментария')
     created = models.DateTimeField(verbose_name='Дата публикации',
                                    auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
 
 
 class Follow(models.Model):

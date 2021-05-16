@@ -49,17 +49,17 @@ class StaticURLTests(TestCase):
         group_slug = StaticURLTests.group.slug
         post_edit_url = f'/{author}/{post_id}/edit/'
         test_data = (
-            ('/', self.client, HTTPStatus.OK),
-            ('/new/', self.authorized_client, HTTPStatus.OK),
-            (f'/{author}/', self.client, HTTPStatus.OK),
-            (f'/{author}/{post_id}/', self.client, HTTPStatus.OK),
-            (f'/group/{group_slug}/', self.client, HTTPStatus.OK),
-            (post_edit_url, self.authorized_client, HTTPStatus.OK),
+            ('/', self.client),
+            ('/new/', self.authorized_client),
+            (f'/{author}/', self.client),
+            (f'/{author}/{post_id}/', self.client),
+            (f'/group/{group_slug}/', self.client),
+            (post_edit_url, self.authorized_client),
         )
-        for url, client, code in test_data:
-            with self.subTest(url=url, code=str(code)):
+        for url, client in test_data:
+            with self.subTest(url=url):
                 response = client.get(url)
-                self.assertEqual(response.status_code, code)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_redirect(self):
         author = StaticURLTests.author.username
@@ -77,14 +77,13 @@ class StaticURLTests(TestCase):
         login = f'{rev_login}?next={rev_ed}'
         red_new = f'{rev_login}?next={rev_new}'
         test_data = (
-            ('/new/', self.client, HTTPStatus.FOUND, red_new),
-            (post_edit_url, self.client, HTTPStatus.FOUND, login),
-            (post_edit_url, reader_client, HTTPStatus.FOUND, profile),
+            ('/new/', self.client, red_new),
+            (post_edit_url, self.client, login),
+            (post_edit_url, reader_client, profile),
         )
-        for url, client, code, redir in test_data:
-            with self.subTest(url=url, code=str(code)):
+        for url, client, redir in test_data:
+            with self.subTest(url=url):
                 response = client.get(url)
-                self.assertEqual(response.status_code, code)
                 self.assertRedirects(response, redir)
 
     def test_not_found(self):
