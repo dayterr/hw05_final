@@ -127,11 +127,6 @@ def add_comment(request, username, post_id):
         n_com.author = request.user
         n_com.post = post
         n_com.save()
-    context = {
-        'form': form,
-        'post': post,
-        'author': post.author,
-    }
     return redirect('post', username=username, post_id=post_id)
 
 
