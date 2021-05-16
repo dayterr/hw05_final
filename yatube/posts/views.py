@@ -132,7 +132,7 @@ def add_comment(request, username, post_id):
         'post': post,
         'author': post.author,
     }
-    return render(request, 'posts/post.html', context)
+    return redirect('post', username=username, post_id=post_id)
 
 
 @login_required
