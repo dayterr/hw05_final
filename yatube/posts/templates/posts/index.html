@@ -8,7 +8,7 @@
   {% load cache %}
   {% cache 20 index_page %}
     {% for post in page %}
-      {% include "includes/post_card.html" with is_profile=True post=post %}
+      {% include "includes/post_card.html" with is_post=False post=post %}
       {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
   {% endcache %}

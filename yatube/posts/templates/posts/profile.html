@@ -7,7 +7,7 @@
     </div>
     <div class="col-md-9">
       {% for post in page %}
-        {% include "includes/post_card.html" with is_profile=True %}
+        {% include "includes/post_card.html" with is_post=False %}
       {% endfor %}
       {% include "includes/paginator.html" %}
     </div>

@@ -173,23 +173,29 @@ class PostsPagesTests(TestCase):
         Post.objects.create(
             text='Ещё один пост',
             group=PostsPagesTests.group,
+            author=PostsPagesTests.user,
         )
         response2 = self.client.get(reverse('index'))
         cont = response.content.decode()
         cont2 = response2.content.decode()
         self.assertEqual(cont, cont2)
         cache.clear()
+        response3 = self.client.get(reverse('index'))
+        cont3 = response3.content.decode()
+        self.assertNotEqual(cont2, cont3)
 
     def test_auth_follow(self):
         amount = Follow.objects.count()
         followed = User.objects.create(username='interesnyuser')
-        self.authorized_client.get(reverse(
+        response = self.authorized_client.get(reverse(
             'profile_follow',
             kwargs={'username': followed.username}))
         self.assertEqual(Follow.objects.count(), amount + 1)
         follow = Follow.objects.first()
         self.assertEqual(follow.author, followed)
         self.assertEqual(follow.user, PostsPagesTests.user)
+        self.assertRedirects(response,
+                             reverse('profile', args=(followed.username,)))
 
     def test_unfollow_test(self):
         followed = User.objects.create(username='interesnyuser')
@@ -197,10 +203,12 @@ class PostsPagesTests(TestCase):
             author=followed, user=PostsPagesTests.user
         )
         amount = Follow.objects.count()
-        self.authorized_client.get(reverse(
+        response = self.authorized_client.get(reverse(
             'profile_unfollow',
             kwargs={'username': followed.username}))
         self.assertEqual(Follow.objects.count(), amount - 1)
+        self.assertRedirects(response,
+                             reverse('profile', args=(followed.username,)))
 
     def test_follow_index(self):
         interesting = User.objects.create(username='interesnyuser')
@@ -212,7 +220,7 @@ class PostsPagesTests(TestCase):
             author=interesting,
         )
         post_not_in = Post.objects.create(
-            text='Этого поста в лнте не будет',
+            text='Этого поста в ленте не будет',
             author=boring,
         )
         response = self.authorized_client.get(reverse('follow_index'))

@@ -6,7 +6,7 @@
       {% include 'includes/author_card.html' %}
     </div>
     <div class="col-md-9">
-      {% include 'includes/post_card.html' with is_profile=False %}
+      {% include 'includes/post_card.html' with is_post=True %}
     </div>
   </div>
   {% include 'includes/comments.html' with comments=post.comments.all %}

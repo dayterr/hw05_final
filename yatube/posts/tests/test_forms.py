@@ -1,11 +1,14 @@
+import os
 import shutil
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import Client, TestCase
+from django.test import Client, override_settings, TestCase
 from django.urls import reverse
 
 from posts.models import Comment, Group, Post, User
+
+testmedia = os.path.join(settings.BASE_DIR, 'testmedia')
 
 
 class PostCreateFormTests(TestCase):
@@ -21,13 +24,14 @@ class PostCreateFormTests(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
+        shutil.rmtree(testmedia, ignore_errors=True)
         super().tearDownClass()
 
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostCreateFormTests.user)
 
+    @override_settings(MEDIA_ROOT=testmedia)
     def test_create_post(self):
         posts_count = Post.objects.count()
         small_gif = (
@@ -141,7 +145,6 @@ class PostCreateFormTests(TestCase):
             group=PostCreateFormTests.group,
             author=PostCreateFormTests.user,
         )
-        amount = post.comments.filter(post=post).count()
         text = 'Интересный комментарий'
         form_data = {
             'text': text,
@@ -157,7 +160,7 @@ class PostCreateFormTests(TestCase):
             follow=True
         )
         com = Comment.objects.first()
-        self.assertEqual(post.comments.filter(post=post).count(), amount + 1)
+        self.assertEqual(post.comments.filter(post=post).count(), 1)
         self.assertEqual(com.text, text)
         self.assertEqual(com.post, post)
 
@@ -167,7 +170,6 @@ class PostCreateFormTests(TestCase):
             group=PostCreateFormTests.group,
             author=PostCreateFormTests.user,
         )
-        amount = Comment.objects.filter(post=post).count()
         text = 'Коммент, который не запостится'
         form_data = {
             'text': text,
@@ -184,5 +186,5 @@ class PostCreateFormTests(TestCase):
         )
         rev_login = reverse('login')
         rev_com = reverse('add_comment', kwargs=kwargs)
-        self.assertEqual(Comment.objects.filter(post=post).count(), amount)
+        self.assertEqual(Comment.objects.filter(post=post).count(), 0)
         self.assertRedirects(response, f'{rev_login}?next={rev_com}')
