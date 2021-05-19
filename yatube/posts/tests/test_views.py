@@ -4,7 +4,7 @@ import shutil
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import Client, TestCase
+from django.test import Client, override_settings, TestCase
 from django.urls import reverse
 
 from posts.forms import PostForm
@@ -13,12 +13,12 @@ from posts.models import Follow, Group, Post, User
 testmedia = os.path.join(settings.BASE_DIR, 'testmedia')
 
 
+@override_settings(MEDIA_ROOT=testmedia)
 class PostsPagesTests(TestCase):
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        settings.MEDIA_ROOT = testmedia
         small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x02\x00'
             b'\x01\x00\x80\x00\x00\x00\x00\x00'

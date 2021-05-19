@@ -162,7 +162,7 @@ class PostCreateFormTests(TestCase):
             follow=True
         )
         com = Comment.objects.first()
-        self.assertEqual(post.comments.filter().count(), 1)
+        self.assertEqual(post.comments.count(), 1)
         self.assertEqual(com.text, text)
         self.assertEqual(com.post, post)
 

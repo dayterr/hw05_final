@@ -87,5 +87,5 @@ class StaticURLTests(TestCase):
                 self.assertRedirects(response, redir)
 
     def test_not_found(self):
-        response = self.client.get('/rruth/')
+        response = self.client.get('/rruth/100500/')
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
