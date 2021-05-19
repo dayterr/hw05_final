@@ -2,6 +2,7 @@ import os
 import shutil
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, override_settings, TestCase
 from django.urls import reverse
@@ -30,6 +31,7 @@ class PostCreateFormTests(TestCase):
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostCreateFormTests.user)
+        cache.clear()
 
     @override_settings(MEDIA_ROOT=testmedia)
     def test_create_post(self):
@@ -160,7 +162,7 @@ class PostCreateFormTests(TestCase):
             follow=True
         )
         com = Comment.objects.first()
-        self.assertEqual(post.comments.filter(post=post).count(), 1)
+        self.assertEqual(post.comments.filter().count(), 1)
         self.assertEqual(com.text, text)
         self.assertEqual(com.post, post)
 
@@ -186,5 +188,5 @@ class PostCreateFormTests(TestCase):
         )
         rev_login = reverse('login')
         rev_com = reverse('add_comment', kwargs=kwargs)
-        self.assertEqual(Comment.objects.filter(post=post).count(), 0)
+        self.assertEqual(post.comments.count(), 0)
         self.assertRedirects(response, f'{rev_login}?next={rev_com}')

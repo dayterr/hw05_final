@@ -1,5 +1,5 @@
+import os
 import shutil
-import tempfile
 
 from django.conf import settings
 from django.core.cache import cache
@@ -10,13 +10,15 @@ from django.urls import reverse
 from posts.forms import PostForm
 from posts.models import Follow, Group, Post, User
 
+testmedia = os.path.join(settings.BASE_DIR, 'testmedia')
+
 
 class PostsPagesTests(TestCase):
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        settings.MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
+        settings.MEDIA_ROOT = testmedia
         small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x02\x00'
             b'\x01\x00\x80\x00\x00\x00\x00\x00'
@@ -46,7 +48,7 @@ class PostsPagesTests(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
+        shutil.rmtree(testmedia, ignore_errors=True)
         super().tearDownClass()
 
     def setUp(self):

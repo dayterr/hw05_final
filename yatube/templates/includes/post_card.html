@@ -1,7 +1,7 @@
 <div class="card mb-3 mt-1 shadow-sm">
   {% load thumbnail %}
-  {% thumbnail post.image "480x170" upscale=False as im %}
-    <img class="card-img" src="{{ im.url }}" />
+  {% thumbnail post.image "500" upscale=False as im %}
+    <img class="card-img" src="{{ im.url }}" style="width:50%;"/>
   {% endthumbnail %}
   <div class="card-body">
     <p class="card-text">

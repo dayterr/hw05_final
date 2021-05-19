@@ -64,12 +64,10 @@ def profile(request, username):
 
 def post_view(request, username, post_id):
     post = get_object_or_404(Post, author__username=username, id=post_id)
-    comments = post.comments.all()
     com_form = CommentForm()
     context = {
         'author': post.author,
         'post': post,
-        'comments': comments,
         'form': com_form,
     }
     return render(request, 'posts/post.html', context)
@@ -132,17 +130,14 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    if request.user.username != username and not Follow.objects.filter(
-            author=author,
-            user=request.user).exists():
-        Follow.objects.create(author=author, user=request.user)
+    if author != request.user:
+        Follow.objects.get_or_create(author=author,
+                                     user=request.user)
     return redirect('profile', username=username)
 
 
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
-    fol = Follow.objects.filter(author=author, user=request.user)
-    if fol.exists():
-        fol.delete()
+    Follow.objects.filter(author=author, user=request.user).delete()
     return redirect('profile', username=username)
