@@ -54,6 +54,7 @@ class PostsPagesTests(TestCase):
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostsPagesTests.user)
+        cache.clear()
 
     def check_post_correct_data(self, context, is_page):
         """Вспомогательный метод для проверки атрибутов поста."""
